@@ -3,19 +3,91 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>정유선의 첫 웹페이지</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘 뭐 입지? | 옷차림 추천 서비스</title>
 </head>
 
 <body>
-  <h1>정유선의 첫 웹페이지</h1>
+  <!--
+  사용자: 날씨와 일정에 맞는 옷차림을 고민하는 사람
+  목적: 상황과 날씨에 적합한 옷차림을 쉽고 빠르게 확인한다.
+  핵심 행동: 오늘의 상황을 입력하고 추천 코디를 확인한다.
+  정보 순서: 서비스 소개 → 주요 기능 → 이용 방법 → 코디 추천 받기
+  -->
 
-  <p>안녕하세요! UI/UX 프로그래밍 수업에서 처음 만든 웹페이지입니다.</p>
+  <header>
+    <h1>오늘 뭐 입지?</h1>
+    <p>날씨와 상황에 맞는 옷차림을 간편하게 추천받아 보세요.</p>
 
-  <h2>자기소개</h2>
-  <p>웹 개발과 UI/UX에 관심을 가지고 공부하고 있습니다.</p>
+    <nav aria-label="주요 메뉴">
+      <a href="#about">서비스 소개</a>
+      <a href="#features">주요 기능</a>
+      <a href="#steps">이용 방법</a>
+      <a href="#recommend">코디 추천 받기</a>
+    </nav>
+  </header>
 
-  <h2>학습 목표</h2>
-  <p>HTML의 기본 구조를 이해하고 직접 웹페이지를 제작해보는 것이 목표입니다.</p>
+  <main>
+
+    <section id="about">
+      <h2>서비스 소개</h2>
+      <h3>오늘의 고민을 더 간단하게</h3>
+      <p>
+        오늘 뭐 입지는 매일 어떤 옷을 입을지 고민하는 사용자를 위해
+        날씨와 상황을 고려한 옷차림을 추천하는 서비스입니다.
+      </p>
+
+      <img src="./assets/images/service.png" alt="옷장 안의 옷들">
+    </section>
+
+    <section id="features">
+      <h2>주요 기능</h2>
+
+      <ul>
+        <li>
+          <h3>날씨별 코디 추천</h3>
+          <p>기온과 날씨에 어울리는 옷차림을 추천합니다.</p>
+        </li>
+
+        <li>
+          <h3>상황별 코디 추천</h3>
+          <p>출근, 데이트, 학교, 여행 등 상황에 맞는 코디를 확인합니다.</p>
+        </li>
+
+        <li>
+          <h3>간편한 코디 선택</h3>
+          <p>복잡한 검색 없이 원하는 조건에 맞는 옷차림을 쉽게 선택합니다.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="steps">
+      <h2>이용 방법</h2>
+
+      <ol>
+        <li>오늘의 날씨와 일정을 확인합니다.</li>
+        <li>원하는 상황과 스타일을 선택합니다.</li>
+        <li>추천된 옷차림을 확인합니다.</li>
+      </ol>
+    </section>
+
+    <section id="recommend">
+      <h2>코디 추천 받기</h2>
+
+      <form>
+        <label for="situation">오늘의 상황</label>
+        <input type="text" id="situation" name="situation" placeholder="예: 출근, 데이트, 여행">
+        <button type="submit">코디 추천받기</button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 오늘 뭐 입지?</p>
+  </footer>
+
 </body>
 
 </html>
+```
