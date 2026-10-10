@@ -330,3 +330,36 @@ input[type="email"]:focus {
     min-height: 48px;
   }
 }
+
+/* =========
+   5주차
+========= */
+
+/* 알림 설정 영역 */
+.settings-panel {
+  background-color: #ffffff;
+}
+
+/* 저장 전 안내 문구 */
+#saveMessage {
+  margin-top: 16px;
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  color: #555763;
+  background-color: #f4f3ff;
+}
+
+/* 저장 완료 상태 */
+#saveMessage.is-saved {
+  color: #245c3a;
+  background-color: #e7f7ed;
+  font-weight: 700;
+}
+
+/* 저장 완료 후 버튼 비활성화 */
+#saveButton:disabled {
+  color: #ffffff;
+  background-color: #a8a8b2;
+  cursor: not-allowed;
+}
