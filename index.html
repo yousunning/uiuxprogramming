@@ -18,7 +18,9 @@
 
   <header class="site-header">
     <p class="eyebrow">DAILY OUTFIT SERVICE</p>
+
     <h1>오늘 뭐 입지?</h1>
+
     <p class="header-description">
       날씨와 상황에 맞는 옷차림을 간편하게 추천받아 보세요.
     </p>
@@ -33,16 +35,19 @@
 
   <main>
 
+    <!-- 서비스 소개 -->
     <section id="about" class="content-section">
       <h2>서비스 소개</h2>
 
       <div class="about-layout">
         <div class="about-text">
           <h3>오늘의 옷 고민을 더 간단하게</h3>
+
           <p>
             오늘 뭐 입지는 매일 어떤 옷을 입을지 고민하는 사용자를 위해
             날씨와 상황을 고려한 옷차림을 추천하는 서비스입니다.
           </p>
+
           <p>
             오늘의 상황을 입력하고 나에게 맞는 코디를 간편하게 확인해 보세요.
           </p>
@@ -52,33 +57,79 @@
       </div>
     </section>
 
+    <!-- 주요 기능 -->
     <section id="features" class="content-section">
       <h2>주요 기능</h2>
 
+      <!-- 4주차: 주요 기능 카드 -->
       <ul class="feature-list">
         <li class="feature-card">
           <h3>날씨별 코디 추천</h3>
-          <p>
-            기온과 날씨에 어울리는 옷차림을 추천합니다.
-          </p>
+          <p>기온과 날씨에 어울리는 옷차림을 추천합니다.</p>
         </li>
 
         <li class="feature-card">
           <h3>상황별 코디 추천</h3>
-          <p>
-            출근, 데이트, 학교, 여행 등 상황에 맞는 코디를 확인합니다.
-          </p>
+          <p>출근, 데이트, 학교, 여행 등 상황에 맞는 코디를 확인합니다.</p>
         </li>
 
         <li class="feature-card">
           <h3>간편한 코디 선택</h3>
-          <p>
-            복잡한 검색 없이 원하는 조건에 맞는 옷차림을 쉽게 선택합니다.
-          </p>
+          <p>복잡한 검색 없이 원하는 조건에 맞는 옷차림을 쉽게 선택합니다.</p>
         </li>
       </ul>
+
+      <!-- 6주차: 탭 UI -->
+      <h3 class="tab-section-title">코디 추천 정보</h3>
+
+      <div class="tabs" role="tablist" aria-label="코디 추천 기능 선택">
+
+        <button id="tab-weather" class="tab is-active" type="button" role="tab" aria-selected="true"
+          aria-controls="panel-weather" data-target="#panel-weather">
+          날씨별 코디
+        </button>
+
+        <button id="tab-situation" class="tab" type="button" role="tab" aria-selected="false"
+          aria-controls="panel-situation" data-target="#panel-situation">
+          상황별 코디
+        </button>
+
+        <button id="tab-style" class="tab" type="button" role="tab" aria-selected="false" aria-controls="panel-style"
+          data-target="#panel-style">
+          간편한 코디 선택
+        </button>
+
+      </div>
+
+      <!-- 날씨별 코디 패널 -->
+      <div id="panel-weather" class="panel is-active" role="tabpanel" aria-labelledby="tab-weather">
+        <h3>날씨별 코디 추천</h3>
+
+        <p>
+          기온과 날씨에 어울리는 옷차림을 추천합니다.
+        </p>
+      </div>
+
+      <!-- 상황별 코디 패널 -->
+      <div id="panel-situation" class="panel" role="tabpanel" aria-labelledby="tab-situation" hidden>
+        <h3>상황별 코디 추천</h3>
+
+        <p>
+          출근, 데이트, 학교, 여행 등 상황에 맞는 코디를 확인합니다.
+        </p>
+      </div>
+
+      <!-- 간편한 코디 선택 패널 -->
+      <div id="panel-style" class="panel" role="tabpanel" aria-labelledby="tab-style" hidden>
+        <h3>간편한 코디 선택</h3>
+
+        <p>
+          복잡한 검색 없이 원하는 조건에 맞는 옷차림을 쉽게 선택합니다.
+        </p>
+      </div>
     </section>
 
+    <!-- 이용 방법 -->
     <section id="steps" class="content-section">
       <h2>이용 방법</h2>
 
@@ -89,6 +140,7 @@
       </ol>
     </section>
 
+    <!-- 코디 추천 -->
     <section id="recommend" class="content-section recommend-section">
       <h2>코디 추천 받기</h2>
 
@@ -100,24 +152,27 @@
 
         <label class="situation-field" for="situation">
           오늘의 상황
+
           <input type="text" id="situation" name="situation" placeholder="예: 출근, 데이트, 여행">
         </label>
 
         <div class="subscribe-form">
+
           <label class="email-field" for="email">
             이메일
+
             <input type="email" id="email" name="email" placeholder="name@example.com">
           </label>
 
           <button class="primary-button" type="submit">
             코디 추천받기
           </button>
-        </div>
 
+        </div>
       </form>
     </section>
 
-    <!-- 5주차: JavaScript 화면 피드백 구현 -->
+    <!-- 5주차: JavaScript 화면 피드백 -->
     <section id="notification" class="content-section settings-panel">
       <h2>코디 추천 알림 설정</h2>
 
@@ -125,7 +180,7 @@
         오늘의 날씨와 상황에 맞는 코디 추천 알림을 설정해 보세요.
       </p>
 
-      <p id="saveMessage">
+      <p id="saveMessage" aria-live="polite">
         코디 추천 알림을 설정해 주세요.
       </p>
 
@@ -134,11 +189,55 @@
       </button>
     </section>
 
+    <!-- 6주차: 이벤트와 화면 상태 -->
+    <section id="interaction-practice" class="content-section settings-panel">
+      <h2>서비스 이용 설정</h2>
+
+      <!-- click 이벤트 -->
+      <div class="interaction-item">
+        <h3>화면 테마 설정</h3>
+
+        <p>원하는 화면 테마를 선택해 보세요.</p>
+
+        <button id="themeButton" class="primary-button" type="button">
+          어두운 테마로 바꾸기
+        </button>
+      </div>
+
+      <!-- input 이벤트 -->
+      <div class="interaction-item">
+        <label for="userName">사용자 이름</label>
+
+        <input id="userName" type="text" maxlength="10" placeholder="이름을 10자 이내로 입력해 주세요">
+
+        <p id="userNameCount" aria-live="polite">0 / 10</p>
+      </div>
+
+      <!-- change 이벤트 -->
+      <div class="interaction-item">
+
+        <label class="agree-row" for="agreeCheck">
+          <input id="agreeCheck" type="checkbox">
+          코디 추천 서비스 이용 안내를 확인했습니다.
+        </label>
+
+        <p id="agreeMessage" aria-live="polite">
+          안내 확인 후 서비스를 시작할 수 있습니다.
+        </p>
+
+        <button id="startButton" class="primary-button" type="button" disabled>
+          서비스 시작하기
+        </button>
+      </div>
+
+    </section>
+
   </main>
 
   <footer class="site-footer">
     <p>© 2026 오늘 뭐 입지?</p>
   </footer>
+
   <script src="script.js"></script>
 </body>
 
