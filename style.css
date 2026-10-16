@@ -567,3 +567,232 @@ body.dark .site-nav a:hover {
   color: #ffffff;
   background-color: #504b80;
 }
+
+/* ========================================
+   7주차: 코디 추천 사용자 흐름
+======================================== */
+
+/* 숨겨진 단계는 반드시 표시하지 않음 */
+#outfitFlow[hidden],
+.outfit-step[hidden] {
+  display: none;
+}
+
+.outfit-flow {
+  margin-top: 24px;
+}
+
+.flow-progress {
+  margin-bottom: 16px;
+  color: #5b50c8;
+  font-weight: 700;
+}
+
+.outfit-step {
+  padding: 24px;
+  border: 1px solid #deddea;
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+.outfit-step h3 {
+  margin-bottom: 20px;
+}
+
+.flow-field {
+  margin-bottom: 20px;
+}
+
+.flow-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.flow-field input,
+.flow-field select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid #bfc1d1;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #292a31;
+  font: inherit;
+}
+
+.flow-field input:focus,
+.flow-field select:focus {
+  border-color: #5b50c8;
+  outline: 3px solid #d9d6ff;
+  outline-offset: 2px;
+}
+
+/* 필수값 누락 또는 잘못된 입력 */
+.flow-field .has-error {
+  border-color: #a52842;
+  background-color: #fff8f9;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: #a52842;
+  font-size: 14px;
+}
+
+.field-error:empty {
+  display: none;
+}
+
+.flow-help {
+  padding: 12px;
+  border-radius: 10px;
+  color: #45415e;
+  background-color: #eeecff;
+}
+
+/* 이전 / 다음 / 완료 버튼 */
+.flow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.secondary-button {
+  padding: 12px 18px;
+  border: 1px solid #bfc1d1;
+  border-radius: 8px;
+  color: #4038a5;
+  background-color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background-color: #f4f3ff;
+}
+
+.secondary-button:focus-visible {
+  outline: 3px solid #b9b4ef;
+  outline-offset: 3px;
+}
+
+/* 신청 내용 확인 */
+.outfit-summary {
+  margin: 20px 0;
+  padding: 8px 20px;
+  border: 1px solid #deddea;
+  border-radius: 12px;
+  background-color: #f4f3ff;
+}
+
+.outfit-summary > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+}
+
+.outfit-summary > div + div {
+  border-top: 1px solid #deddea;
+}
+
+.outfit-summary dt {
+  font-weight: 700;
+}
+
+.outfit-summary dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* 완료 상태 */
+.outfit-complete {
+  border-color: #b7dfc4;
+  background-color: #effaf2;
+}
+
+.outfit-complete h3 {
+  color: #245c3a;
+}
+
+/* 어두운 테마 대응 */
+body.dark .outfit-step {
+  color: #f4f4f8;
+  border-color: #50515f;
+  background-color: #2d2e38;
+}
+
+body.dark .flow-progress {
+  color: #c6c1ff;
+}
+
+body.dark .flow-help,
+body.dark .outfit-summary {
+  color: #f4f4f8;
+  border-color: #50515f;
+  background-color: #383945;
+}
+
+body.dark .outfit-summary > div + div {
+  border-color: #50515f;
+}
+
+body.dark .outfit-complete {
+  border-color: #53876a;
+  background-color: #294434;
+}
+
+body.dark .outfit-complete h3 {
+  color: #c4f4d3;
+}
+
+body.dark .field-error {
+  color: #ffb7c4;
+}
+
+body.dark .flow-field .has-error {
+  border-color: #ff8299;
+}
+
+body.dark .secondary-button {
+  color: #f4f4f8;
+  border-color: #737487;
+  background-color: #383945;
+}
+
+body.dark .secondary-button:hover {
+  background-color: #504b80;
+}
+
+/* 7주차 모바일 반응형 */
+@media (max-width: 768px) {
+  .outfit-step {
+    padding: 16px;
+  }
+
+  .flow-actions {
+    flex-direction: column;
+  }
+
+  .flow-actions button,
+  #outfitStart,
+  #outfitRestart {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .outfit-summary {
+    padding: 8px 14px;
+  }
+
+  .outfit-summary > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
