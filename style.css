@@ -796,3 +796,115 @@ body.dark .secondary-button:hover {
     gap: 4px;
   }
 }
+
+/* ========================================
+   중간고사: 맞춤 코디 추천 결과
+======================================== */
+
+#generateOutfit[hidden],
+#outfitResult[hidden],
+#outfitNoResult[hidden] {
+  display: none;
+}
+
+.recommendation-result,
+.recommendation-empty {
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px solid #deddea;
+  border-radius: 12px;
+  background-color: #f4f3ff;
+}
+
+.result-title {
+  color: #4038a5;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.result-details {
+  margin: 20px 0;
+}
+
+.result-details > div {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #deddea;
+}
+
+.result-details dt {
+  font-weight: 700;
+}
+
+.result-details dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.result-reason {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.recommendation-empty {
+  border-color: #e6b8c0;
+  background-color: #fff4f5;
+}
+
+.recommendation-empty h3 {
+  color: #9d2439;
+}
+
+/* 어두운 테마 */
+body.dark .recommendation-result {
+  color: #f4f4f8;
+  border-color: #50515f;
+  background-color: #383945;
+}
+
+body.dark .result-title {
+  color: #c6c1ff;
+}
+
+body.dark .result-details > div {
+  border-color: #50515f;
+}
+
+body.dark .result-reason {
+  color: #f4f4f8;
+  background-color: #454653;
+}
+
+body.dark .recommendation-empty {
+  color: #f4f4f8;
+  border-color: #89505a;
+  background-color: #49343a;
+}
+
+body.dark .recommendation-empty h3 {
+  color: #ffb7c4;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .recommendation-result,
+  .recommendation-empty {
+    padding: 16px;
+  }
+
+  .result-details > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  #generateOutfit,
+  #regenerateOutfit,
+  #editOutfitConditions {
+    width: 100%;
+    min-height: 48px;
+  }
+}

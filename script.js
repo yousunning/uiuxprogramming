@@ -196,6 +196,9 @@ function startOutfitFlow() {
 
   if (!completedStep.hidden) {
     resetOutfitFlow();
+    recommendationIndex = 0;
+    previousRecommendationKey = "";
+    clearRecommendationResult();
   }
 
   showOutfitStep(1);
@@ -382,4 +385,235 @@ function resetOutfitFlow() {
 document.querySelector("#outfitRestart").addEventListener("click", function () {
   resetOutfitFlow();
   situationInput.focus();
+});
+
+// ========================================
+// 중간고사: 개인 맞춤 코디 추천 기능
+// ========================================
+
+// DOM 요소 선택
+const generateOutfitButton = document.querySelector("#generateOutfit");
+
+const regenerateOutfitButton = document.querySelector("#regenerateOutfit");
+
+const outfitResult = document.querySelector("#outfitResult");
+
+const outfitNoResult = document.querySelector("#outfitNoResult");
+
+const outfitResultTitle = document.querySelector("#outfitResultTitle");
+
+const resultTop = document.querySelector("#resultTop");
+
+const resultBottom = document.querySelector("#resultBottom");
+
+const resultOuter = document.querySelector("#resultOuter");
+
+const resultReason = document.querySelector("#resultReason");
+
+const noResultMessage = document.querySelector("#noResultMessage");
+
+const editOutfitConditions = document.querySelector("#editOutfitConditions");
+
+// 지원하는 상황별 코디 데이터
+const outfitRecommendations = {
+  출근: {
+    캐주얼: [
+      { top: "니트", bottom: "슬랙스" },
+      { top: "셔츠", bottom: "면바지" },
+    ],
+    포멀: [
+      { top: "블라우스 또는 셔츠", bottom: "정장 슬랙스" },
+      { top: "단정한 셔츠", bottom: "테일러드 팬츠" },
+    ],
+    스포티: [
+      { top: "깔끔한 맨투맨", bottom: "조거 팬츠" },
+      { top: "베이직 티셔츠", bottom: "활동성 좋은 팬츠" },
+    ],
+  },
+
+  데이트: {
+    캐주얼: [
+      { top: "가디건", bottom: "데님 팬츠" },
+      { top: "니트", bottom: "와이드 팬츠" },
+    ],
+    포멀: [
+      { top: "셔츠", bottom: "슬랙스" },
+      { top: "블라우스", bottom: "테일러드 팬츠" },
+    ],
+    스포티: [
+      { top: "스웨트셔츠", bottom: "조거 팬츠" },
+      { top: "후드 티셔츠", bottom: "데님 팬츠" },
+    ],
+  },
+
+  여행: {
+    캐주얼: [
+      { top: "편안한 티셔츠", bottom: "데님 팬츠" },
+      { top: "맨투맨", bottom: "면바지" },
+    ],
+    포멀: [
+      { top: "린넨 셔츠", bottom: "슬랙스" },
+      { top: "단정한 니트", bottom: "와이드 팬츠" },
+    ],
+    스포티: [
+      { top: "기능성 티셔츠", bottom: "조거 팬츠" },
+      { top: "스포츠 맨투맨", bottom: "트레이닝 팬츠" },
+    ],
+  },
+
+  학교: {
+    캐주얼: [
+      { top: "맨투맨", bottom: "데님 팬츠" },
+      { top: "후드 티셔츠", bottom: "면바지" },
+    ],
+    포멀: [
+      { top: "셔츠", bottom: "슬랙스" },
+      { top: "가디건", bottom: "테일러드 팬츠" },
+    ],
+    스포티: [
+      { top: "후드 티셔츠", bottom: "조거 팬츠" },
+      { top: "스포츠 티셔츠", bottom: "트레이닝 팬츠" },
+    ],
+  },
+};
+
+// 날씨별 겉옷 및 추천 이유
+const weatherRecommendations = {
+  맑음: {
+    outer: "가벼운 가디건 또는 필요에 따라 생략",
+    reason: "맑은 날에는 활동하기 편한 옷차림을 추천합니다.",
+  },
+  흐림: {
+    outer: "가벼운 재킷",
+    reason: "흐린 날에는 겉옷을 준비하면 좋습니다.",
+  },
+  비: {
+    outer: "방수 재킷",
+    reason: "비가 오는 날에는 방수 겉옷과 미끄럽지 않은 신발을 추천합니다.",
+  },
+  눈: {
+    outer: "방한 패딩",
+    reason: "눈이 오는 날에는 보온성과 미끄럼 방지를 고려하세요.",
+  },
+};
+
+// 동일 조건에서 다른 코디를 순서대로 추천하기 위한 상태
+let recommendationIndex = 0;
+let previousRecommendationKey = "";
+
+// 입력한 상황을 지원하는 상황으로 분류
+function findOutfitSituation(value) {
+  const normalized = value.trim().replace(/\s+/g, "");
+
+  const supportedSituations = ["출근", "데이트", "여행", "학교"];
+
+  return (
+    supportedSituations.find(function (situation) {
+      return normalized.includes(situation);
+    }) || null
+  );
+}
+
+// 추천 결과와 오류 상태 숨기기
+function clearRecommendationResult() {
+  outfitResult.hidden = true;
+  outfitNoResult.hidden = true;
+
+  outfitResultTitle.textContent = "";
+  resultTop.textContent = "";
+  resultBottom.textContent = "";
+  resultOuter.textContent = "";
+  resultReason.textContent = "";
+  noResultMessage.textContent = "";
+
+  generateOutfitButton.hidden = false;
+}
+
+// 추천 코디 생성
+function generateOutfitRecommendation() {
+  const situation = findOutfitSituation(situationInput.value);
+  const weather = outfitWeather.value;
+  const style = outfitStyle.value;
+
+  clearRecommendationResult();
+
+  // 지원하지 않는 상황: 결과 없음 처리
+  if (!situation) {
+    outfitNoResult.hidden = false;
+
+    noResultMessage.textContent =
+      "현재는 출근, 데이트, 여행, 학교 상황을 지원합니다. " +
+      "상황을 수정한 후 다시 추천받아 주세요.";
+
+    generateOutfitButton.hidden = true;
+    editOutfitConditions.focus();
+    return;
+  }
+
+  const candidates = outfitRecommendations[situation][style];
+  const weatherInfo = weatherRecommendations[weather];
+
+  // 추천 데이터가 없는 경우
+  if (!candidates || !weatherInfo || candidates.length === 0) {
+    outfitNoResult.hidden = false;
+
+    noResultMessage.textContent =
+      "선택한 조건에 맞는 추천 정보가 없습니다. " +
+      "조건을 수정한 후 다시 시도해 주세요.";
+
+    generateOutfitButton.hidden = true;
+    editOutfitConditions.focus();
+    return;
+  }
+
+  const recommendationKey = situation + "|" + weather + "|" + style;
+
+  // 조건이 달라지면 첫 번째 추천부터 시작
+  if (previousRecommendationKey !== recommendationKey) {
+    recommendationIndex = 0;
+    previousRecommendationKey = recommendationKey;
+  }
+
+  const selected = candidates[recommendationIndex % candidates.length];
+
+  recommendationIndex += 1;
+
+  outfitResultTitle.textContent = situation + "을(를) 위한 " + style + " 코디";
+
+  resultTop.textContent = selected.top;
+  resultBottom.textContent = selected.bottom;
+  resultOuter.textContent = weatherInfo.outer;
+
+  resultReason.textContent =
+    weatherInfo.reason +
+    " " +
+    situation +
+    " 상황에 맞는 " +
+    style +
+    " 스타일을 기준으로 추천했습니다.";
+
+  outfitResult.hidden = false;
+  generateOutfitButton.hidden = true;
+
+  regenerateOutfitButton.focus();
+}
+
+// 최초 추천 생성
+generateOutfitButton.addEventListener("click", generateOutfitRecommendation);
+
+// 다른 코디 추천
+regenerateOutfitButton.addEventListener("click", generateOutfitRecommendation);
+
+// 결과 없음 → 상황 입력 단계로 이동
+editOutfitConditions.addEventListener("click", function () {
+  clearRecommendationResult();
+  showOutfitStep(1);
+  situationInput.focus();
+});
+
+// 기존 다시 시작 버튼에 신규 기능 초기화 연결
+document.querySelector("#outfitRestart").addEventListener("click", function () {
+  recommendationIndex = 0;
+  previousRecommendationKey = "";
+  clearRecommendationResult();
 });
