@@ -184,7 +184,21 @@ function showOutfitStep(step) {
   });
 
   outfitProgress.textContent =
-    step <= 3 ? step + " / 3 · " + stepNames[step - 1] : "코디 추천 신청 완료";
+    step <= 3 ? `${step} / 3 · ${stepNames[step - 1]}` : "코디 추천 신청 완료";
+
+  const currentStep = document.querySelector(
+    `.outfit-step[data-step="${step}"]`,
+  );
+
+  const heading = currentStep.querySelector("h3");
+
+  if (heading) {
+    heading.tabIndex = -1;
+
+    requestAnimationFrame(function () {
+      heading.focus({ preventScroll: true });
+    });
+  }
 }
 
 // 3. 시작: 기존 핵심 버튼과 6주차 시작 버튼 연결
@@ -196,9 +210,6 @@ function startOutfitFlow() {
 
   if (!completedStep.hidden) {
     resetOutfitFlow();
-    recommendationIndex = 0;
-    previousRecommendationKey = "";
-    clearRecommendationResult();
   }
 
   showOutfitStep(1);
@@ -223,83 +234,165 @@ startButton.addEventListener("click", function () {
   startOutfitFlow();
 });
 
-// 4. 필수값 오류 표시
-function setFieldError(input, errorElement, message) {
-  errorElement.textContent = message;
-  input.classList.toggle("has-error", message !== "");
+// ========================================
+// 9주차: 입력 검증 및 상태 관리
+// ========================================
 
-  if (message !== "") {
-    input.setAttribute("aria-invalid", "true");
+const situationField = document.querySelector("#situationField");
+const situationHelp = document.querySelector("#situationHelp");
+const situationCount = document.querySelector("#situationCount");
+const emailField = document.querySelector("#emailField");
+
+// 오류 표시
+function showInputError(input, field, errorElement, message) {
+  input.setAttribute("aria-invalid", "true");
+  input.classList.add("has-error");
+
+  field.classList.add("has-error");
+  field.classList.remove("is-valid");
+
+  errorElement.textContent = message;
+  return false;
+}
+
+// 오류 해제
+function clearInputError(input, field, errorElement) {
+  input.removeAttribute("aria-invalid");
+  input.classList.remove("has-error");
+  field.classList.remove("has-error");
+
+  errorElement.textContent = "";
+}
+
+// 기존 초기화 함수와 호환
+function setFieldError(input, errorElement, message) {
+  const field = input.closest(".flow-field");
+
+  if (message) {
+    showInputError(input, field, errorElement, message);
   } else {
-    input.removeAttribute("aria-invalid");
+    clearInputError(input, field, errorElement);
   }
 }
 
-// 5. 이메일 형식 검사
+// 이메일 형식 검사
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-// 6. 정보 입력 검증
-function validateOutfitInformation() {
-  const situation = situationInput.value.trim();
-  const email = emailInput.value.trim();
+// 상황 입력 상태
+function updateSituationExperience() {
+  const length = situationInput.value.length;
+  const enough = situationInput.value.trim().length >= 2;
+  const invalid = situationInput.getAttribute("aria-invalid") === "true";
 
-  let isValid = true;
-  let firstInvalidField = null;
+  situationCount.textContent = `${length} / 50자`;
 
-  if (situation === "") {
-    setFieldError(
-      situationInput,
-      situationError,
-      "오늘의 상황을 입력해 주세요. 예: 출근, 데이트, 여행",
-    );
+  situationField.classList.toggle("is-valid", enough && !invalid);
 
-    isValid = false;
-    firstInvalidField = situationInput;
-  } else {
-    setFieldError(situationInput, situationError, "");
+  if (!invalid) {
+    situationHelp.textContent = enough
+      ? "입력 조건을 충족했습니다."
+      : "외출 상황을 2자 이상 입력해 주세요.";
   }
-
-  if (email === "") {
-    setFieldError(emailInput, emailError, "이메일 주소를 입력해 주세요.");
-
-    isValid = false;
-
-    if (!firstInvalidField) {
-      firstInvalidField = emailInput;
-    }
-  } else if (!isValidEmail(email)) {
-    setFieldError(
-      emailInput,
-      emailError,
-      "올바른 이메일 형식으로 입력해 주세요. 예: name@example.com",
-    );
-
-    isValid = false;
-
-    if (!firstInvalidField) {
-      firstInvalidField = emailInput;
-    }
-  } else {
-    setFieldError(emailInput, emailError, "");
-  }
-
-  if (!isValid && firstInvalidField) {
-    firstInvalidField.focus();
-  }
-
-  return isValid;
 }
 
-// 입력값 수정 시 오류 메시지 제거
+// 상황 검증
+function validateSituation() {
+  const value = situationInput.value.trim();
+
+  if (!value) {
+    situationHelp.textContent = "외출 상황을 2자 이상 입력해 주세요.";
+
+    return showInputError(
+      situationInput,
+      situationField,
+      situationError,
+      "오늘의 상황을 입력해 주세요.",
+    );
+  }
+
+  if (value.length < 2) {
+    situationHelp.textContent = "외출 상황을 2자 이상 입력해 주세요.";
+
+    return showInputError(
+      situationInput,
+      situationField,
+      situationError,
+      "오늘의 상황을 2자 이상 입력해 주세요.",
+    );
+  }
+
+  clearInputError(situationInput, situationField, situationError);
+  updateSituationExperience();
+
+  return true;
+}
+
+// 이메일 검증
+function validateEmail() {
+  const value = emailInput.value.trim();
+
+  if (!value) {
+    return showInputError(
+      emailInput,
+      emailField,
+      emailError,
+      "이메일 주소를 입력해 주세요.",
+    );
+  }
+
+  if (!isValidEmail(value)) {
+    return showInputError(
+      emailInput,
+      emailField,
+      emailError,
+      "올바른 이메일 형식으로 입력해 주세요.",
+    );
+  }
+
+  clearInputError(emailInput, emailField, emailError);
+  emailField.classList.add("is-valid");
+
+  return true;
+}
+
+// 전체 입력 검증
+function validateOutfitInformation() {
+  const situationValid = validateSituation();
+  const emailValid = validateEmail();
+
+  if (!situationValid) {
+    situationInput.focus();
+  } else if (!emailValid) {
+    emailInput.focus();
+  }
+
+  return situationValid && emailValid;
+}
+
+// 상황 입력 변경
 situationInput.addEventListener("input", function () {
-  setFieldError(situationInput, situationError, "");
+  if (situationInput.getAttribute("aria-invalid") === "true") {
+    validateSituation();
+  }
+
+  updateSituationExperience();
 });
 
+// 이메일 입력 변경
 emailInput.addEventListener("input", function () {
-  setFieldError(emailInput, emailError, "");
+  if (emailInput.getAttribute("aria-invalid") === "true") {
+    validateEmail();
+  } else {
+    emailField.classList.toggle(
+      "is-valid",
+      isValidEmail(emailInput.value.trim()),
+    );
+  }
 });
+
+updateSituationExperience();
 
 // 7. 1단계 → 2단계
 document.querySelector("#outfitNext1").addEventListener("click", function () {
@@ -337,13 +430,21 @@ document.querySelector("#outfitBack2").addEventListener("click", function () {
 
 // 10. 2단계 → 3단계: 입력 및 선택값 반영
 document.querySelector("#outfitNext2").addEventListener("click", function () {
+  if (!validateRequest()) {
+    outfitRequest.focus();
+    return;
+  }
+
   summarySituation.textContent = situationInput.value.trim();
   summaryEmail.textContent = emailInput.value.trim();
   summaryWeather.textContent = outfitWeather.value;
   summaryStyle.textContent = outfitStyle.value;
 
+  summaryRequest.textContent = requestOption.checked
+    ? outfitRequest.value.trim()
+    : "없음";
+
   showOutfitStep(3);
-  document.querySelector("#outfitBack3").focus();
 });
 
 // 11. 3단계 → 2단계: 선택값 유지
@@ -351,14 +452,103 @@ document.querySelector("#outfitBack3").addEventListener("click", function () {
   showOutfitStep(2);
   outfitWeather.focus();
 });
+// ========================================
+// 9주차: 제출 상태 및 실패 처리
+// ========================================
 
-// 12. 신청 완료
-document
-  .querySelector("#outfitComplete")
-  .addEventListener("click", function () {
-    showOutfitStep(4);
-    document.querySelector("#outfitRestart").focus();
+const outfitForm = document.querySelector("#outfitFlow");
+const outfitCompleteButton = document.querySelector("#outfitComplete");
+const submitStatus = document.querySelector("#submitStatus");
+
+// 실습용 실패 조건: 주소에 ?save-error=1 추가
+const forceSubmitFailure = new URLSearchParams(window.location.search).has(
+  "save-error",
+);
+
+let isSubmitting = false;
+
+function setSubmitState(loading, message) {
+  isSubmitting = loading;
+
+  outfitForm.setAttribute("aria-busy", String(loading));
+
+  outfitCompleteButton.disabled = loading;
+
+  outfitCompleteButton.textContent = loading
+    ? "신청 처리 중..."
+    : "코디 추천 신청 완료";
+
+  submitStatus.textContent = message;
+}
+
+function wait(milliseconds) {
+  return new Promise(function (resolve) {
+    window.setTimeout(resolve, milliseconds);
   });
+}
+
+// 실습용 비동기 신청 처리
+async function submitOutfitApplication() {
+  await wait(600);
+
+  if (forceSubmitFailure) {
+    throw new Error("실습용 신청 실패");
+  }
+
+  // 실제 서버 전송 없이 성공 상태를 반환
+  return true;
+}
+
+// 최종 제출
+outfitForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  if (isSubmitting) {
+    return;
+  }
+
+  const currentStep = document.querySelector(".outfit-step:not([hidden])");
+
+  if (!currentStep || currentStep.dataset.step !== "3") {
+    return;
+  }
+
+  // 최종 제출 시 입력값 전체 재검증
+  if (!validateOutfitInformation()) {
+    showOutfitStep(1);
+
+    requestAnimationFrame(function () {
+      outfitForm.querySelector('[aria-invalid="true"]')?.focus();
+    });
+
+    return;
+  }
+
+  if (!validateRequest()) {
+    showOutfitStep(2);
+
+    requestAnimationFrame(function () {
+      outfitRequest.focus();
+    });
+
+    return;
+  }
+
+  setSubmitState(true, "코디 추천 신청을 처리하고 있습니다.");
+
+  try {
+    await submitOutfitApplication();
+
+    setSubmitState(false, "코디 추천 신청이 완료되었습니다.");
+
+    showOutfitStep(4);
+  } catch (error) {
+    setSubmitState(
+      false,
+      "신청을 완료하지 못했습니다. 입력한 내용은 유지됩니다. 다시 시도해 주세요.",
+    );
+  }
+});
 
 // 13. 다시 시작: 입력·오류·선택·진행 상태 초기화
 function resetOutfitFlow() {
@@ -368,9 +558,6 @@ function resetOutfitFlow() {
   outfitWeather.value = "맑음";
   outfitStyle.value = "캐주얼";
 
-  setFieldError(situationInput, situationError, "");
-  setFieldError(emailInput, emailError, "");
-
   weatherHelp.textContent = "오늘의 날씨에 맞는 옷차림을 선택해 보세요.";
 
   summarySituation.textContent = "";
@@ -379,13 +566,38 @@ function resetOutfitFlow() {
   summaryStyle.textContent = "";
 
   showOutfitStep(1);
-}
 
-// 14. 다시 시작 버튼
-document.querySelector("#outfitRestart").addEventListener("click", function () {
-  resetOutfitFlow();
-  situationInput.focus();
-});
+  // 9주차 추가 요청사항 초기화
+  requestOption.checked = false;
+  outfitRequest.value = "";
+
+  clearInputError(outfitRequest, requestOptions, requestError);
+
+  requestOptions.classList.remove("is-valid");
+
+  syncRequestFields();
+  updateRequestExperience();
+
+  // 상황·이메일 입력 상태 초기화
+  clearInputError(situationInput, situationField, situationError);
+
+  clearInputError(emailInput, emailField, emailError);
+
+  situationField.classList.remove("is-valid");
+  emailField.classList.remove("is-valid");
+
+  updateSituationExperience();
+
+  summaryRequest.textContent = "없음";
+
+  // 제출 상태 초기화
+  setSubmitState(false, "");
+
+  // 중간고사 추천 결과 초기화
+  recommendationIndex = 0;
+  previousRecommendationKey = "";
+  clearRecommendationResult();
+}
 
 // ========================================
 // 중간고사: 개인 맞춤 코디 추천 기능
@@ -611,9 +823,134 @@ editOutfitConditions.addEventListener("click", function () {
   situationInput.focus();
 });
 
-// 기존 다시 시작 버튼에 신규 기능 초기화 연결
+// 다시 시작: 모든 입력값 및 추천 상태 초기화
 document.querySelector("#outfitRestart").addEventListener("click", function () {
-  recommendationIndex = 0;
-  previousRecommendationKey = "";
-  clearRecommendationResult();
+  resetOutfitFlow();
+  situationInput.focus();
+});
+
+// ========================================
+// 9주차: 추가 요청사항 조건부 입력
+// ========================================
+
+const requestOption = document.querySelector("#requestOption");
+const requestOptions = document.querySelector("#requestOptions");
+const outfitRequest = document.querySelector("#outfitRequest");
+
+const requestHelp = document.querySelector("#requestHelp");
+const requestCount = document.querySelector("#requestCount");
+const requestError = document.querySelector("#requestError");
+
+const summaryRequest = document.querySelector("#summaryRequest");
+
+// 체크박스 상태와 입력 활성화 상태를 함께 변경
+function syncRequestFields() {
+  const open = requestOption.checked;
+
+  // 체크 여부에 따라 추가 요청사항 영역 표시/숨김
+  requestOptions.hidden = !open;
+
+  // 숨겨진 입력 요소 비활성화, 표시 시 활성화
+  outfitRequest.disabled = !open;
+
+  requestOption.setAttribute("aria-expanded", String(open));
+
+  if (!open) {
+    clearInputError(outfitRequest, requestOptions, requestError);
+    requestOptions.classList.remove("is-valid");
+  }
+
+  updateRequestExperience();
+
+  // 브라우저 콘솔에서 상태 확인
+  console.log("체크 여부:", requestOption.checked);
+  console.log("영역 숨김:", requestOptions.hidden);
+  console.log("입력 비활성화:", outfitRequest.disabled);
+}
+
+requestOption.addEventListener("change", syncRequestFields);
+
+// 요청사항 글자 수 및 상태
+function updateRequestExperience() {
+  const length = outfitRequest.value.length;
+  const enough = outfitRequest.value.trim().length >= 2;
+
+  requestCount.textContent = `${length} / 100자`;
+
+  const invalid = outfitRequest.getAttribute("aria-invalid") === "true";
+
+  requestOptions.classList.toggle(
+    "is-valid",
+    requestOption.checked && enough && !invalid,
+  );
+
+  if (!invalid) {
+    requestHelp.textContent = enough
+      ? "입력 조건을 충족했습니다."
+      : "2~100자로 입력해 주세요.";
+  }
+}
+
+// 요청사항 검증
+function validateRequest() {
+  if (!requestOption.checked) {
+    return true;
+  }
+
+  const value = outfitRequest.value.trim();
+
+  if (value === "") {
+    return showInputError(
+      outfitRequest,
+      requestOptions,
+      requestError,
+      "추가 요청사항을 입력하거나 체크를 해제해 주세요.",
+    );
+  }
+
+  if (value.length < 2) {
+    return showInputError(
+      outfitRequest,
+      requestOptions,
+      requestError,
+      "추가 요청사항을 2자 이상 입력해 주세요.",
+    );
+  }
+
+  clearInputError(outfitRequest, requestOptions, requestError);
+
+  updateRequestExperience();
+  return true;
+}
+
+outfitRequest.addEventListener("input", function () {
+  if (outfitRequest.getAttribute("aria-invalid") === "true") {
+    validateRequest();
+  }
+
+  updateRequestExperience();
+});
+
+syncRequestFields();
+updateRequestExperience();
+
+// ========================================
+// 9주차: Enter 키 입력 처리
+// ========================================
+
+// 1단계에서 Enter 입력 시 다음 단계 버튼과 동일하게 처리
+[situationInput, emailInput].forEach(function (input) {
+  input.addEventListener("keydown", function (event) {
+    if (event.key !== "Enter" || event.isComposing) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    document.querySelector("#outfitNext1").click();
+  });
 });

@@ -609,7 +609,7 @@ body.dark .site-nav a:hover {
   font-weight: 700;
 }
 
-.flow-field input,
+.flow-field input:not([type="checkbox"]),
 .flow-field select {
   display: block;
   width: 100%;
@@ -907,4 +907,183 @@ body.dark .recommendation-empty h3 {
     width: 100%;
     min-height: 48px;
   }
+}
+/* ========================================
+   9주차: 폼 UI 및 입력 경험 개선
+======================================== */
+
+.required {
+  margin-left: 4px;
+  color: #a52842;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.field-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.field-meta p,
+.field-help {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #5e6272;
+}
+
+#situationCount,
+#requestCount {
+  flex-shrink: 0;
+}
+
+.flow-field .field-error {
+  min-height: 24px;
+  margin: 6px 0 0;
+  color: #a52842;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 입력 조건 충족 */
+.flow-field.is-valid input,
+.conditional-field.is-valid textarea {
+  border-color: #16805d;
+}
+
+.flow-field.is-valid #situationHelp,
+.conditional-field.is-valid #requestHelp {
+  color: #116448;
+}
+
+/* 입력 오류 */
+.flow-field.has-error input,
+.conditional-field.has-error textarea {
+  border-color: #a52842;
+  background-color: #fff8f9;
+}
+
+.flow-field input:focus-visible,
+.conditional-field textarea:focus-visible {
+  outline: 3px solid #d9d6ff;
+  outline-offset: 2px;
+}
+
+/* 조건부 입력 */
+.conditional-field {
+  min-width: 0;
+  margin-top: 16px;
+  padding: 20px;
+  border: 1px solid #deddea;
+  border-radius: 12px;
+}
+
+.conditional-field legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+
+.conditional-field label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.conditional-field textarea {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  border: 1px solid #bfc1d1;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #292a31;
+  font: inherit;
+  resize: vertical;
+}
+
+.conditional-field[hidden] {
+  display: none;
+}
+
+/* 제출 상태 */
+#submitStatus {
+  min-height: 24px;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#outfitComplete:disabled {
+  background-color: #a8a8b2;
+  cursor: not-allowed;
+}
+
+/* 다크 모드 */
+body.dark .field-meta p,
+body.dark .field-help {
+  color: #d8d8e2;
+}
+
+body.dark .required,
+body.dark .flow-field .field-error {
+  color: #ffb7c4;
+}
+
+body.dark .conditional-field {
+  border-color: #50515f;
+}
+
+body.dark .conditional-field textarea {
+  color: #292a31;
+  background-color: #fff;
+}
+
+body.dark .flow-field.is-valid #situationHelp,
+body.dark .conditional-field.is-valid #requestHelp {
+  color: #c4f4d3;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .field-meta {
+    flex-wrap: wrap;
+  }
+
+  .conditional-field {
+    padding: 14px;
+  }
+
+  .conditional-field textarea {
+    width: 100%;
+  }
+}
+/* 9주차: 조건부 입력 체크박스 정렬 */
+.flow-field label.agree-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.flow-field .agree-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  flex: 0 0 auto;
+}
+/* 9주차: 다크 모드 입력 상태 */
+body.dark .flow-field.has-error input:not([type="checkbox"]),
+body.dark .conditional-field.has-error textarea {
+  border-color: #ff8299;
+  background-color: #49343a;
+  color: #ffffff;
+}
+
+body.dark .flow-field.is-valid input:not([type="checkbox"]),
+body.dark .conditional-field.is-valid textarea {
+  border-color: #71d8aa;
 }

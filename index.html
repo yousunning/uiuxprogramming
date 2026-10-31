@@ -107,7 +107,6 @@
         <li>신청 내용을 확인하고 코디 추천 신청을 완료합니다.</li>
       </ol>
     </section>
-
     <!-- 7주차: 핵심 사용자 흐름 -->
     <section id="recommend" class="content-section recommend-section">
       <h2>코디 추천 받기</h2>
@@ -120,7 +119,7 @@
         코디 추천받기
       </button>
 
-      <div id="outfitFlow" class="outfit-flow" hidden>
+      <form id="outfitFlow" class="outfit-flow" novalidate aria-busy="false" hidden>
         <p id="outfitProgress" class="flow-progress" aria-live="polite">
           1 / 3 · 정보 입력
         </p>
@@ -129,16 +128,36 @@
         <section class="outfit-step" data-step="1">
           <h3>1. 오늘의 정보 입력</h3>
 
-          <div class="flow-field">
-            <label for="situation">오늘의 상황 (필수)</label>
-            <input id="situation" name="situation" type="text" maxlength="50" placeholder="예: 출근, 데이트, 여행"
-              aria-describedby="situationError">
+          <div class="flow-field" id="situationField">
+            <label for="situation">
+              오늘의 상황 <span class="required">필수</span>
+            </label>
+
+            <input id="situation" name="situation" type="text" minlength="2" maxlength="50" required
+              placeholder="예: 출근, 데이트, 여행" aria-describedby="situationHelp situationCount situationError">
+
+            <div class="field-meta">
+              <p id="situationHelp">
+                외출 상황을 2자 이상 입력해 주세요.
+              </p>
+              <p id="situationCount" aria-live="polite">0 / 50자</p>
+            </div>
+
             <p id="situationError" class="field-error" role="alert"></p>
           </div>
 
-          <div class="flow-field">
-            <label for="email">이메일 (필수)</label>
-            <input id="email" name="email" type="email" placeholder="name@example.com" aria-describedby="emailError">
+          <div class="flow-field" id="emailField">
+            <label for="email">
+              이메일 <span class="required">필수</span>
+            </label>
+
+            <input id="email" name="email" type="email" required placeholder="name@example.com"
+              aria-describedby="emailHelp emailError">
+
+            <p id="emailHelp" class="field-help">
+              이메일 주소를 입력해 주세요. 실제 이메일은 발송되지 않습니다.
+            </p>
+
             <p id="emailError" class="field-error" role="alert"></p>
           </div>
 
@@ -152,6 +171,32 @@
         <!-- 2단계: 코디 조건 선택 -->
         <section class="outfit-step" data-step="2" hidden>
           <h3>2. 코디 조건 선택</h3>
+          <div class="flow-field">
+            <label class="agree-row" for="requestOption">
+              <input id="requestOption" name="requestOption" type="checkbox" value="included"
+                aria-controls="requestOptions" aria-expanded="false">
+              <span>코디에 대한 추가 요청사항 입력하기</span>
+            </label>
+
+            <fieldset id="requestOptions" class="conditional-field" hidden>
+              <legend>추가 요청사항</legend>
+
+              <label for="outfitRequest">
+                원하는 코디 조건 <span class="required">선택 시 필수</span>
+              </label>
+
+              <textarea id="outfitRequest" name="outfitRequest" rows="3" minlength="2" maxlength="100"
+                placeholder="예: 편안한 신발과 어울리는 코디" aria-describedby="requestHelp requestCount requestError"
+                disabled></textarea>
+
+              <div class="field-meta">
+                <p id="requestHelp">2~100자로 입력해 주세요.</p>
+                <p id="requestCount" aria-live="polite">0 / 100자</p>
+              </div>
+
+              <p id="requestError" class="field-error" role="alert"></p>
+            </fieldset>
+          </div>
 
           <div class="flow-field">
             <label for="outfitWeather">오늘의 날씨</label>
@@ -196,25 +241,36 @@
               <dt>오늘의 상황</dt>
               <dd id="summarySituation"></dd>
             </div>
+
             <div>
               <dt>이메일</dt>
               <dd id="summaryEmail"></dd>
             </div>
+
             <div>
               <dt>날씨</dt>
               <dd id="summaryWeather"></dd>
             </div>
+
             <div>
               <dt>선호 스타일</dt>
               <dd id="summaryStyle"></dd>
             </div>
+
+            <div>
+              <dt>추가 요청사항</dt>
+              <dd id="summaryRequest">없음</dd>
+            </div>
           </dl>
+
+          <p id="submitStatus" role="status" aria-live="polite"></p>
 
           <div class="flow-actions">
             <button id="outfitBack3" class="secondary-button" type="button">
               조건 수정하기
             </button>
-            <button id="outfitComplete" class="primary-button" type="button">
+
+            <button id="outfitComplete" class="primary-button" type="submit">
               코디 추천 신청 완료
             </button>
           </div>
@@ -280,52 +336,55 @@
           </div>
         </section>
 
+      </form> <!-- 9주차: 코디 추천 신청 폼 종료 -->
 
-        <!-- 5주차: 알림 설정 피드백 유지 -->
-        <section id="notification" class="content-section settings-panel">
-          <h2>코디 추천 알림 설정</h2>
-          <p>오늘의 날씨와 상황에 맞는 코디 추천 알림을 설정해 보세요.</p>
-          <p id="saveMessage" aria-live="polite">
-            코디 추천 알림을 설정해 주세요.
-          </p>
-          <button id="saveButton" class="primary-button" type="button">
-            알림 설정 저장
-          </button>
-        </section>
+    </section> <!-- 코디 추천 받기 영역 종료 -->
 
-        <!-- 6주차: 이벤트와 화면 상태 유지 -->
-        <section id="interaction-practice" class="content-section settings-panel">
-          <h2>서비스 이용 설정</h2>
+    <!-- 5주차: 알림 설정 피드백 유지 -->
+    <section id="notification" class="content-section settings-panel">
+      <h2>코디 추천 알림 설정</h2>
+      <p>오늘의 날씨와 상황에 맞는 코디 추천 알림을 설정해 보세요.</p>
+      <p id="saveMessage" aria-live="polite">
+        코디 추천 알림을 설정해 주세요.
+      </p>
+      <button id="saveButton" class="primary-button" type="button">
+        알림 설정 저장
+      </button>
+    </section>
 
-          <div class="interaction-item">
-            <h3>화면 테마 설정</h3>
-            <p>원하는 화면 테마를 선택해 보세요.</p>
-            <button id="themeButton" class="primary-button" type="button">
-              어두운 테마로 바꾸기
-            </button>
-          </div>
+    <!-- 6주차: 이벤트와 화면 상태 유지 -->
+    <section id="interaction-practice" class="content-section settings-panel">
+      <h2>서비스 이용 설정</h2>
 
-          <div class="interaction-item">
-            <label for="userName">사용자 이름</label>
-            <input id="userName" type="text" maxlength="10" placeholder="이름을 10자 이내로 입력해 주세요">
-            <p id="userNameCount" aria-live="polite">0 / 10</p>
-          </div>
+      <div class="interaction-item">
+        <h3>화면 테마 설정</h3>
+        <p>원하는 화면 테마를 선택해 보세요.</p>
+        <button id="themeButton" class="primary-button" type="button">
+          어두운 테마로 바꾸기
+        </button>
+      </div>
 
-          <div class="interaction-item">
-            <label class="agree-row" for="agreeCheck">
-              <input id="agreeCheck" type="checkbox">
-              코디 추천 서비스 이용 안내를 확인했습니다.
-            </label>
+      <div class="interaction-item">
+        <label for="userName">사용자 이름</label>
+        <input id="userName" type="text" maxlength="10" placeholder="이름을 10자 이내로 입력해 주세요">
+        <p id="userNameCount" aria-live="polite">0 / 10</p>
+      </div>
 
-            <p id="agreeMessage" aria-live="polite">
-              안내 확인 후 서비스를 시작할 수 있습니다.
-            </p>
+      <div class="interaction-item">
+        <label class="agree-row" for="agreeCheck">
+          <input id="agreeCheck" type="checkbox">
+          코디 추천 서비스 이용 안내를 확인했습니다.
+        </label>
 
-            <button id="startButton" class="primary-button" type="button" disabled>
-              서비스 시작하기
-            </button>
-          </div>
-        </section>
+        <p id="agreeMessage" aria-live="polite">
+          안내 확인 후 서비스를 시작할 수 있습니다.
+        </p>
+
+        <button id="startButton" class="primary-button" type="button" disabled>
+          서비스 시작하기
+        </button>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
