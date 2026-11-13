@@ -23,7 +23,11 @@
       날씨와 상황에 맞는 옷차림을 간편하게 추천받아 보세요.
     </p>
 
-    <nav class="site-nav" aria-label="주요 메뉴">
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-controls="main-nav" aria-expanded="false">
+      메뉴 열기
+    </button>
+
+    <nav id="main-nav" class="site-nav" aria-label="주요 메뉴">
       <a href="#about">서비스 소개</a>
       <a href="#features">주요 기능</a>
       <a href="#steps">이용 방법</a>
@@ -312,7 +316,11 @@
             </dl>
 
             <p id="resultReason" class="result-reason"></p>
+            <button id="saveOutfit" class="primary-button" type="button">
+              이 코디 저장하기
+            </button>
 
+            <p id="saveOutfitStatus" role="status" aria-live="polite"></p>
             <button id="regenerateOutfit" class="secondary-button" type="button">
               다른 코디 추천받기
             </button>
@@ -339,6 +347,35 @@
       </form> <!-- 9주차: 코디 추천 신청 폼 종료 -->
 
     </section> <!-- 코디 추천 받기 영역 종료 -->
+
+    <!-- 10주차: 코디 저장 목록 및 상태 필터 -->
+    <section id="archive" class="content-section">
+      <h2>내 코디 기록</h2>
+      <p>추천받은 코디를 저장하고 상태별로 확인할 수 있습니다.</p>
+
+      <div class="outfit-filters" role="group" aria-label="코디 기록 표시 범위">
+        <button type="button" class="filter-button is-active" data-filter="all" aria-pressed="true">전체</button>
+
+        <button type="button" class="filter-button" data-filter="active" aria-pressed="false">저장됨</button>
+
+        <button type="button" class="filter-button" data-filter="cancelled" aria-pressed="false">취소됨</button>
+      </div>
+
+      <p id="archiveStatus" role="status" aria-live="polite"></p>
+      <p id="archiveCount">표시 중인 코디 0개</p>
+
+      <div id="archiveEmpty" class="archive-empty" hidden>
+        <h3 id="archiveEmptyTitle">아직 저장한 코디가 없습니다.</h3>
+        <p id="archiveEmptyDescription">
+          코디 추천을 받은 뒤 저장해 보세요.
+        </p>
+        <a id="archiveEmptyAction" href="#recommend">
+          코디 추천받으러 가기
+        </a>
+      </div>
+
+      <ul id="archiveList" class="archive-list" aria-label="저장된 코디 목록"></ul>
+    </section>
 
     <!-- 5주차: 알림 설정 피드백 유지 -->
     <section id="notification" class="content-section settings-panel">

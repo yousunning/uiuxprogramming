@@ -1087,3 +1087,107 @@ body.dark .flow-field.is-valid input:not([type="checkbox"]),
 body.dark .conditional-field.is-valid textarea {
   border-color: #71d8aa;
 }
+
+/* 10주차: 코디 저장 목록 필터 */
+
+.outfit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.filter-button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid #bfc1d1;
+  border-radius: 10px;
+  background: #fff;
+  color: #292a31;
+  cursor: pointer;
+}
+
+.filter-button.is-active {
+  background: #235db8;
+  border-color: #235db8;
+  color: #fff;
+}
+
+.archive-list {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.archive-card,
+.archive-empty {
+  padding: 18px;
+  border: 1px solid #deddea;
+  border-radius: 12px;
+  background: #fff;
+  color: #292a31;
+}
+
+.archive-card p {
+  overflow-wrap: anywhere;
+}
+
+.archive-card button {
+  margin-top: 8px;
+}
+
+#saveOutfit {
+  margin: 12px 8px 8px 0;
+}
+
+/* hidden 상태 유지 */
+#archiveList[hidden],
+#archiveEmpty[hidden],
+#archiveEmptyAction[hidden] {
+  display: none;
+}
+
+/* 다크 모드 */
+body.dark .archive-card,
+body.dark .archive-empty,
+body.dark .filter-button:not(.is-active) {
+  background: #30313e;
+  color: #fff;
+  border-color: #626373;
+}
+
+/* 데스크톱: 메뉴 버튼 숨김 */
+.menu-toggle {
+  display: none;
+}
+
+/* 모바일: 메뉴 열기·닫기 */
+@media (max-width: 600px) {
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+
+  /* 기본 상태: 메뉴 숨김 */
+  .site-nav {
+    display: none;
+    width: 100%;
+  }
+
+  /* 버튼 클릭 시 메뉴 표시 */
+  .site-nav.is-open {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .site-nav a {
+    display: block;
+    padding: 10px 12px;
+  }
+}

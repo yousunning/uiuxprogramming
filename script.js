@@ -954,3 +954,239 @@ updateRequestExperience();
     document.querySelector("#outfitNext1").click();
   });
 });
+const navLinks = document.querySelectorAll(".site-nav a");
+
+function updateCurrentNav() {
+  const currentHash = window.location.hash;
+
+  navLinks.forEach((link) => {
+    const isCurrent = currentHash
+      ? link.getAttribute("href") === currentHash
+      : link === navLinks[0];
+
+    link.classList.toggle("is-current", isCurrent);
+
+    if (isCurrent) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+window.addEventListener("hashchange", updateCurrentNav);
+updateCurrentNav();
+
+// ========================================
+// 10주차: 모바일 메뉴 열기·닫기
+// ========================================
+
+const menuToggle = document.querySelector("#menu-toggle");
+const mainNav = document.querySelector("#main-nav");
+
+if (menuToggle && mainNav) {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = mainNav.classList.toggle("is-open");
+
+    menuToggle.textContent = isOpen ? "메뉴 닫기" : "메뉴 열기";
+    menuToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  // 메뉴 선택 시 자동 닫기
+  mainNav.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      mainNav.classList.remove("is-open");
+      menuToggle.textContent = "메뉴 열기";
+      menuToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
+// ========================================
+// 10주차: 코디 저장 목록 및 필터
+// ========================================
+
+// DOM 요소
+const archiveList = document.querySelector("#archiveList");
+const archiveEmpty = document.querySelector("#archiveEmpty");
+const archiveEmptyTitle = document.querySelector("#archiveEmptyTitle");
+const archiveEmptyDescription = document.querySelector(
+  "#archiveEmptyDescription",
+);
+const archiveEmptyAction = document.querySelector("#archiveEmptyAction");
+const archiveCount = document.querySelector("#archiveCount");
+const archiveStatus = document.querySelector("#archiveStatus");
+
+const filterButtons = document.querySelectorAll(".filter-button");
+const saveOutfitButton = document.querySelector("#saveOutfit");
+const saveOutfitStatus = document.querySelector("#saveOutfitStatus");
+
+// 저장 데이터
+const OUTFIT_ARCHIVE_KEY = "today-outfit-archive-v1";
+let outfitArchive = [];
+let currentFilter = "all";
+
+// 기존 저장 기록 불러오기
+try {
+  const stored = JSON.parse(localStorage.getItem(OUTFIT_ARCHIVE_KEY) || "[]");
+
+  if (Array.isArray(stored)) {
+    outfitArchive = stored.filter(
+      (item) =>
+        item &&
+        typeof item.id === "string" &&
+        typeof item.title === "string" &&
+        typeof item.cancelled === "boolean",
+    );
+  }
+} catch (error) {
+  archiveStatus.textContent = "저장 기록을 불러오지 못했습니다.";
+}
+
+// 저장 기록 유지
+function persistOutfitArchive() {
+  try {
+    localStorage.setItem(OUTFIT_ARCHIVE_KEY, JSON.stringify(outfitArchive));
+    return true;
+  } catch (error) {
+    archiveStatus.textContent = "저장 공간 오류가 발생했습니다.";
+    return false;
+  }
+}
+
+// 선택된 필터에 맞는 목록 조회
+function getVisibleOutfits() {
+  return outfitArchive.filter((item) => {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "cancelled") return item.cancelled;
+    return !item.cancelled;
+  });
+}
+
+// DOM 생성 유틸리티
+function createArchiveText(tag, value) {
+  const element = document.createElement(tag);
+  element.textContent = value;
+  return element;
+}
+
+// 코디 기록 렌더링
+function renderOutfitArchive() {
+  const visible = getVisibleOutfits();
+
+  archiveList.replaceChildren();
+
+  archiveList.hidden = visible.length === 0;
+  archiveEmpty.hidden = visible.length !== 0;
+  archiveCount.textContent = `표시 중인 코디 ${visible.length}개`;
+
+  if (visible.length === 0) {
+    const filtered = currentFilter !== "all";
+
+    archiveEmptyTitle.textContent = filtered
+      ? "선택한 상태의 코디가 없습니다."
+      : "아직 저장한 코디가 없습니다.";
+
+    archiveEmptyDescription.textContent = filtered
+      ? "다른 상태를 선택해 보세요."
+      : "코디 추천을 받은 뒤 저장해 보세요.";
+
+    archiveEmptyAction.hidden = filtered;
+    return;
+  }
+
+  visible.forEach((item) => {
+    const card = document.createElement("li");
+    card.className = "archive-card";
+
+    card.append(
+      createArchiveText("h3", item.title),
+      createArchiveText("p", item.cancelled ? "상태: 취소됨" : "상태: 저장됨"),
+      createArchiveText("p", `상의: ${item.top} / 하의: ${item.bottom}`),
+      createArchiveText("p", `겉옷: ${item.outer}`),
+      createArchiveText("p", item.reason),
+      createArchiveText("p", `저장 시각: ${item.savedAt}`),
+    );
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary-button";
+    button.dataset.id = item.id;
+    button.textContent = item.cancelled ? "저장 복구하기" : "저장 취소하기";
+
+    card.append(button);
+    archiveList.append(card);
+  });
+}
+
+// 필터 버튼 클릭
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+
+    filterButtons.forEach((item) => {
+      const active = item === button;
+
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+
+    renderOutfitArchive();
+  });
+});
+
+// 추천 결과 저장
+saveOutfitButton.addEventListener("click", () => {
+  if (outfitResult.hidden) return;
+
+  const item = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    title: outfitResultTitle.textContent,
+    top: resultTop.textContent,
+    bottom: resultBottom.textContent,
+    outer: resultOuter.textContent,
+    reason: resultReason.textContent,
+    savedAt: new Date().toLocaleString("ko-KR"),
+    cancelled: false,
+  };
+
+  outfitArchive.unshift(item);
+
+  if (!persistOutfitArchive()) {
+    outfitArchive.shift();
+    saveOutfitStatus.textContent = "코디를 저장하지 못했습니다.";
+    return;
+  }
+
+  saveOutfitStatus.textContent = "코디가 저장되었습니다.";
+  archiveStatus.textContent = "코디가 저장되었습니다.";
+
+  renderOutfitArchive();
+});
+
+// 저장 취소 및 복구
+archiveList.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-id]");
+
+  if (!button || !archiveList.contains(button)) return;
+
+  const item = outfitArchive.find((entry) => entry.id === button.dataset.id);
+
+  if (!item) return;
+
+  item.cancelled = !item.cancelled;
+
+  if (!persistOutfitArchive()) {
+    item.cancelled = !item.cancelled;
+    return;
+  }
+
+  archiveStatus.textContent = item.cancelled
+    ? "코디 저장을 취소했습니다."
+    : "코디 저장을 복구했습니다.";
+
+  renderOutfitArchive();
+});
+
+// 최초 렌더링
+renderOutfitArchive();
