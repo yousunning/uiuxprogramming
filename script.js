@@ -971,6 +971,13 @@ function updateCurrentNav() {
     } else {
       link.removeAttribute("aria-current");
     }
+    const currentLink = document.querySelector(
+      '.site-nav a[aria-current="location"]',
+    );
+
+    const pageName = currentLink ? currentLink.textContent.trim() : "홈";
+
+    document.title = `${pageName} | 오늘 뭐 입지?`;
   });
 }
 
@@ -990,6 +997,19 @@ if (menuToggle && mainNav) {
 
     menuToggle.textContent = isOpen ? "메뉴 닫기" : "메뉴 열기";
     menuToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  // 11주차: Esc 키로 모바일 메뉴 닫기
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !mainNav.classList.contains("is-open")) {
+      return;
+    }
+
+    menuToggle.textContent = "메뉴 열기";
+    menuToggle.setAttribute("aria-expanded", "false");
+
+    // 메뉴를 열었던 버튼으로 초점 복귀
+    menuToggle.focus();
   });
 
   // 메뉴 선택 시 자동 닫기
@@ -1091,7 +1111,13 @@ function renderOutfitArchive() {
       ? "다른 상태를 선택해 보세요."
       : "코디 추천을 받은 뒤 저장해 보세요.";
 
-    archiveEmptyAction.hidden = filtered;
+    archiveEmptyAction.hidden = false;
+
+    archiveEmptyAction.textContent = filtered
+      ? "전체 보기"
+      : "코디 추천받으러 가기";
+
+    archiveEmptyAction.href = filtered ? "#archive" : "#recommend";
     return;
   }
 
@@ -1132,7 +1158,31 @@ filterButtons.forEach((button) => {
     });
 
     renderOutfitArchive();
+
+    const count = getVisibleOutfits().length;
+    const filterName = button.textContent.trim();
+
+    archiveStatus.textContent =
+      count > 0
+        ? `${filterName} 코디 ${count}개가 표시됩니다.`
+        : `${filterName} 코디가 없습니다. 다른 조건을 선택해 보세요.`;
   });
+});
+
+// 11주차: 빈 필터 결과에서 전체 목록으로 복귀
+archiveEmptyAction.addEventListener("click", (event) => {
+  if (currentFilter === "all") {
+    return;
+  }
+
+  event.preventDefault();
+
+  const allButton = document.querySelector('.filter-button[data-filter="all"]');
+
+  if (!allButton) return;
+
+  allButton.click();
+  allButton.focus();
 });
 
 // 추천 결과 저장
@@ -1186,6 +1236,18 @@ archiveList.addEventListener("click", (event) => {
     : "코디 저장을 복구했습니다.";
 
   renderOutfitArchive();
+
+  // 목록이 갱신된 후 같은 카드의 버튼으로 초점 복귀
+  const nextButton = Array.from(
+    archiveList.querySelectorAll("button[data-id]"),
+  ).find((element) => element.dataset.id === item.id);
+
+  // 현재 필터에서 카드가 사라졌다면 필터 버튼으로 초점 이동
+  const selectedFilter = document.querySelector(
+    '.filter-button[aria-pressed="true"]',
+  );
+
+  (nextButton || selectedFilter)?.focus();
 });
 
 // 최초 렌더링

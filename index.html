@@ -15,7 +15,7 @@
     완료 조건: 입력 내용을 확인하고 신청 완료 화면에 도달한다.
     흐름: 시작 → 정보 입력 → 조건 선택 → 내용 확인 → 완료
   -->
-
+  <a class="skip-link" href="#top">본문 바로가기</a>
   <header class="site-header">
     <p class="eyebrow">DAILY OUTFIT SERVICE</p>
     <h1>오늘 뭐 입지?</h1>
@@ -35,7 +35,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="top" tabindex="-1">
     <!-- 서비스 소개: 기존 유지 -->
     <section id="about" class="content-section">
       <h2>서비스 소개</h2>
@@ -144,7 +144,7 @@
               <p id="situationHelp">
                 외출 상황을 2자 이상 입력해 주세요.
               </p>
-              <p id="situationCount" aria-live="polite">0 / 50자</p>
+              <p id="situationCount">0 / 50자</p>
             </div>
 
             <p id="situationError" class="field-error" role="alert"></p>
@@ -195,7 +195,7 @@
 
               <div class="field-meta">
                 <p id="requestHelp">2~100자로 입력해 주세요.</p>
-                <p id="requestCount" aria-live="polite">0 / 100자</p>
+                <p id="requestCount">0 / 100자</p>
               </div>
 
               <p id="requestError" class="field-error" role="alert"></p>
