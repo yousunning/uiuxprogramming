@@ -1,3 +1,17 @@
+/* 12주차: 공통 디자인 토큰 */
+:root {
+  --ui-page: #f6f6fb;
+  --ui-surface: #ffffff;
+  --ui-ink: #292a31;
+  --ui-muted: #5e6272;
+  --ui-line: #e0e1ec;
+  --ui-primary: #5b50c8;
+  --ui-primary-hover: #4038a5;
+  --ui-focus: #b9b4ef;
+  --ui-navy: #19183e;
+  --ui-accent: #cfff5e;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1161,8 +1175,63 @@ body.dark .filter-button:not(.is-active) {
 /* 데스크톱: 메뉴 버튼 숨김 */
 .menu-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 48px;
+  padding: 10px 18px;
+
+  border: 1px solid var(--ui-primary);
+  border-radius: 10px;
+
+  background-color: var(--ui-primary);
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
+.menu-toggle:hover {
+  background-color: var(--ui-primary-hover);
+  border-color: var(--ui-primary-hover);
+}
+
+/* 메뉴가 열린 상태 */
+.menu-toggle[aria-expanded="true"] {
+  background-color: #ebe9ff;
+  border-color: var(--ui-primary);
+  color: #4038a5;
+}
+
+/* 키보드 초점 */
+.menu-toggle:focus-visible {
+  outline: 3px solid var(--ui-focus);
+  outline-offset: 3px;
+}
+/* 12주차: 다크 모드 메뉴 버튼 */
+body.dark .menu-toggle {
+  background-color: #504b80;
+  border-color: #b9b4ef;
+  color: #ffffff;
+}
+
+body.dark .menu-toggle:hover {
+  background-color: #625c9b;
+}
+
+body.dark .menu-toggle[aria-expanded="true"] {
+  background-color: #b9b4ef;
+  border-color: #b9b4ef;
+  color: #19183e;
+}
 /* 모바일: 메뉴 열기·닫기 */
 @media (max-width: 600px) {
   .menu-toggle {
@@ -1224,4 +1293,295 @@ body.dark .filter-button:not(.is-active) {
 .skip-link:focus-visible {
   outline: 3px solid #5b50c8;
   outline-offset: 3px;
+}
+
+/* 12주차: 공통 버튼 규칙 */
+.primary-button,
+.secondary-button,
+.filter-button,
+.menu-toggle {
+  min-height: 48px;
+  font-family: inherit;
+  font-weight: 700;
+}
+
+/* 키보드 초점 표시 */
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.filter-button:focus-visible,
+.menu-toggle:focus-visible,
+.sidebar-cta:focus-visible,
+.archive-card button:focus-visible {
+  outline: 3px solid var(--ui-focus);
+  outline-offset: 3px;
+}
+
+/* 선택된 필터 */
+.filter-button.is-active {
+  background: var(--ui-primary);
+  border-color: var(--ui-primary);
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+/* 12주차: 데스크톱 사이드바 */
+.sidebar-cta {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    max-width: none;
+    height: 100vh;
+    padding: 32px 18px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    background: var(--ui-navy);
+    color: #ffffff;
+  }
+
+  .site-header .eyebrow,
+  .site-header h1,
+  .site-header .header-description {
+    color: #ffffff;
+  }
+
+  .site-header h1 {
+    font-size: 27px;
+    overflow-wrap: anywhere;
+  }
+
+  .site-header .header-description {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--ui-focus);
+    color: #19183e;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .site-header .site-nav {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .site-header .site-nav a {
+    display: block;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: #edf0ff;
+  }
+
+  .site-header .site-nav a:hover {
+    background: #30336e;
+    color: #ffffff;
+  }
+
+  .site-header .site-nav a.is-current {
+    background: #393b87;
+    color: #ffffff;
+    box-shadow: inset 3px 0 0 var(--ui-accent);
+  }
+
+  main,
+  .site-footer {
+    width: calc(100% - 250px);
+    max-width: none;
+    margin-left: 250px;
+    margin-right: 0;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+}
+/* 12주차: 태블릿 메뉴 */
+@media (min-width: 601px) and (max-width: 900px) {
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .site-header .eyebrow,
+  .site-header h1,
+  .site-header .header-description {
+    width: 100%;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-header .site-nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .site-header .site-nav.is-open {
+    display: flex;
+  }
+
+  .site-header .site-nav a {
+    display: block;
+    min-height: 44px;
+  }
+}
+/* ========================================
+   12주차: 데이터 기반 코디 카드
+======================================== */
+
+.archive-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 248px;
+  padding: 22px;
+  border: 1px solid var(--ui-line);
+  border-top: 3px solid var(--ui-primary);
+  border-radius: 14px;
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+}
+
+/* 취소된 코디 */
+.archive-card.is-cancelled {
+  border-top-color: var(--ui-muted);
+  background: #f0f0f5;
+}
+
+/* 카드 상단 */
+.archive-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+
+/* 상태 라벨 */
+.archive-state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #ebe9ff;
+  color: #292a31;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.is-cancelled .archive-state {
+  background: #e0e1e8;
+  color: #444653;
+}
+
+.archive-date {
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+
+.archive-card h3 {
+  font-size: 18px;
+  margin: 4px 0 8px;
+}
+
+.archive-card p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.archive-reason {
+  color: var(--ui-muted);
+  font-size: 14px;
+}
+
+/* 카드 하단 버튼 */
+.archive-card .secondary-button {
+  min-height: 48px;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.archive-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* 700px 이하: 한 열 */
+@media (max-width: 700px) {
+  .archive-list {
+    grid-template-columns: 1fr;
+  }
+}
+/* 12주차: 다크 모드 카드 */
+body.dark {
+  --ui-surface: #30313e;
+  --ui-ink: #ffffff;
+  --ui-muted: #c4c6d5;
+  --ui-line: #626373;
+  --ui-primary: #b9b4ef;
+  --ui-focus: #b9b4ef;
+}
+
+body.dark .archive-card {
+  background: var(--ui-surface);
+  color: var(--ui-ink);
+  border-color: var(--ui-line);
+  border-top-color: var(--ui-primary);
+}
+
+body.dark .archive-card.is-cancelled {
+  background: #393947;
+  border-top-color: var(--ui-muted);
+}
+
+body.dark .archive-state {
+  background: #48435e;
+  color: #ffffff;
+}
+
+body.dark .archive-date,
+body.dark .archive-reason {
+  color: var(--ui-muted);
+}
+
+body.dark .filter-button.is-active {
+  background: var(--ui-primary);
+  border-color: var(--ui-primary);
+  color: #19183e;
 }

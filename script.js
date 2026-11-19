@@ -1090,6 +1090,57 @@ function createArchiveText(tag, value) {
   return element;
 }
 
+// ========================================
+// 12주차: 코디 카드 컴포넌트 생성
+// ========================================
+
+function createOutfitCard(item) {
+  const card = document.createElement("li");
+
+  // 코디 저장 상태에 따른 스타일
+  card.className = item.cancelled
+    ? "archive-card is-cancelled"
+    : "archive-card";
+
+  // 카드 상단: 상태 및 저장 시각
+  const top = document.createElement("div");
+  top.className = "archive-card-top";
+
+  const state = createArchiveText(
+    "span",
+    item.cancelled ? "취소됨" : "저장됨",
+    "archive-state",
+  );
+
+  const savedAt = createArchiveText("span", item.savedAt, "archive-date");
+
+  top.append(state, savedAt);
+
+  // 코디 정보
+  const title = createArchiveText("h3", item.title);
+
+  const topClothes = createArchiveText("p", `상의: ${item.top}`);
+
+  const bottomClothes = createArchiveText("p", `하의: ${item.bottom}`);
+
+  const outer = createArchiveText("p", `겉옷: ${item.outer}`);
+
+  const reason = createArchiveText("p", item.reason, "archive-reason");
+
+  // 저장 취소 및 복구 버튼
+  const action = document.createElement("button");
+  action.type = "button";
+  action.className = "secondary-button";
+  action.dataset.id = item.id;
+
+  action.textContent = item.cancelled ? "저장 복구하기" : "저장 취소하기";
+
+  // 카드 조립
+  card.append(top, title, topClothes, bottomClothes, outer, reason, action);
+
+  return card;
+}
+
 // 코디 기록 렌더링
 function renderOutfitArchive() {
   const visible = getVisibleOutfits();
@@ -1122,27 +1173,26 @@ function renderOutfitArchive() {
   }
 
   visible.forEach((item) => {
-    const card = document.createElement("li");
-    card.className = "archive-card";
-
-    card.append(
-      createArchiveText("h3", item.title),
-      createArchiveText("p", item.cancelled ? "상태: 취소됨" : "상태: 저장됨"),
-      createArchiveText("p", `상의: ${item.top} / 하의: ${item.bottom}`),
-      createArchiveText("p", `겉옷: ${item.outer}`),
-      createArchiveText("p", item.reason),
-      createArchiveText("p", `저장 시각: ${item.savedAt}`),
-    );
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "secondary-button";
-    button.dataset.id = item.id;
-    button.textContent = item.cancelled ? "저장 복구하기" : "저장 취소하기";
-
-    card.append(button);
-    archiveList.append(card);
+    archiveList.append(createOutfitCard(item));
   });
+
+  card.append(
+    createArchiveText("h3", item.title),
+    createArchiveText("p", item.cancelled ? "상태: 취소됨" : "상태: 저장됨"),
+    createArchiveText("p", `상의: ${item.top} / 하의: ${item.bottom}`),
+    createArchiveText("p", `겉옷: ${item.outer}`),
+    createArchiveText("p", item.reason),
+    createArchiveText("p", `저장 시각: ${item.savedAt}`),
+  );
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "secondary-button";
+  button.dataset.id = item.id;
+  button.textContent = item.cancelled ? "저장 복구하기" : "저장 취소하기";
+
+  card.append(button);
+  archiveList.append(card);
 }
 
 // 필터 버튼 클릭
